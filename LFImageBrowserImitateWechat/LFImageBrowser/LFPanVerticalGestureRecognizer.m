@@ -19,7 +19,7 @@
         CGPoint nowPoint = [touch locationInView:self.view];
         CGPoint prevPoint = [touch previousLocationInView:self.view];
         
-        BOOL isHorzitional = prevPoint.x - nowPoint.x > 2;
+        BOOL isHorzitional = prevPoint.x - nowPoint.x > 5;
         BOOL isVertical = nowPoint.y - prevPoint.y > 5;
         if (!isHorzitional && isVertical){
             self.isMoving = YES;

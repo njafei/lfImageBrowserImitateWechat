@@ -18,6 +18,8 @@
 
 @end
 
+const CGFloat minScale = 0.5;
+
 @implementation LFImageBrowserView
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -46,6 +48,11 @@
     singleTapGesture.numberOfTapsRequired = 1;
     [self.imageView addGestureRecognizer:singleTapGesture];
     
+    UITapGestureRecognizer *doubleTapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(doubleSingleGestureRecongnize:)];
+    doubleTapGesture.numberOfTapsRequired = 2;
+    [self.imageView addGestureRecognizer:doubleTapGesture];
+    
+    [singleTapGesture requireGestureRecognizerToFail:doubleTapGesture];
 }
 
 #pragma mark - single tap
@@ -55,6 +62,13 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(removeSelf)]) {
         [self.delegate removeSelf];
     }
+}
+
+#pragma mark - double tap
+
+- (void)doubleSingleGestureRecongnize: (UITapGestureRecognizer *)recongnize
+{
+    NSLog(@"double tap");
 }
 
 #pragma mark - pan
@@ -72,9 +86,10 @@
         {
             CGPoint translationPoint = [recognize translationInView:self.imageView];
             
-            CGFloat biLi = translationPoint.y > 0 ? 1 - translationPoint.y/1000 : 1;
-            self.imageView.width = self.beginSize.width *biLi;
-            self.imageView.height = self.beginSize.height * biLi;
+            CGFloat scale = translationPoint.y > 0 ? 1 - translationPoint.y/1000 : 1;
+            scale = scale >= minScale ? scale : minScale;
+            self.imageView.width = self.beginSize.width *scale;
+            self.imageView.height = self.beginSize.height * scale;
             
             self.imageView.x = translationPoint.x + self.beginPoint.x;
             self.imageView.y = translationPoint.y + self.beginPoint.y;
